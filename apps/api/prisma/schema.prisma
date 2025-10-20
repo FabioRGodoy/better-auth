@@ -1,0 +1,70 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  OWNER
+  ADMIN
+  MEMBER
+}
+
+model User {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  email     String   @unique
+  name      String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  memberships     Membership[]
+  teamsOwned      Team[]       @relation("TeamOwner")
+  invitationsSent Invitation[] @relation("InvitationInviter")
+}
+
+model Team {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  name    String
+  ownerId String @db.ObjectId
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  owner       User         @relation("TeamOwner", fields: [ownerId], references: [id])
+  memberships Membership[]
+  invitations Invitation[]
+}
+
+model Membership {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  teamId    String   @db.ObjectId
+  userId    String   @db.ObjectId
+  role      Role     @default(MEMBER)
+  createdAt DateTime @default(now())
+
+  team Team @relation(fields: [teamId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+
+  @@unique([teamId, userId], map: "membership_unique_team_user")
+}
+
+model Invitation {
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  teamId     String    @db.ObjectId
+  email      String
+  role       Role      @default(MEMBER)
+  token      String    @unique
+  expiresAt  DateTime
+  acceptedAt DateTime?
+  inviterId  String    @db.ObjectId
+  createdAt  DateTime  @default(now())
+
+  team    Team @relation(fields: [teamId], references: [id])
+  inviter User @relation("InvitationInviter", fields: [inviterId], references: [id])
+
+  @@index([teamId, email], map: "invitation_team_email_idx")
+}
