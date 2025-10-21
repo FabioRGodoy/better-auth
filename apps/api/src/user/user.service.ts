@@ -1,26 +1,39 @@
-import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { getBetterAuthDb } from '../better-auth-db';
+import { ObjectId } from 'mongodb';
+
+type BetterAuthUser = {
+  _id: ObjectId;
+  id: string;
+  createdAt: Date;
+  updatedAt: Date;
+  email: string;
+  emailVerified: boolean;
+  name?: string | null;
+  image?: string | null;
+};
 
 @Injectable()
-export class UserService {
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
-  }
+export class UsersService {
+  async findById(userId: string) {
+    const db = await getBetterAuthDb();
+    const users = db.collection<BetterAuthUser>('users');
 
-  findAll() {
-    return `This action returns all user`;
-  }
+    const query = ObjectId.isValid(userId)
+      ? { _id: new ObjectId(userId) }
+      : { id: userId };
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
-  }
+    const user = await users.findOne(query);
+    if (!user) throw new NotFoundException('Usuário não encontrado');
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+    return {
+      id: user.id,
+      email: user.email,
+      emailVerified: user.emailVerified,
+      name: user.name ?? null,
+      image: user.image ?? null,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    };
   }
 }
