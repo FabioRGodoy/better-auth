@@ -8,6 +8,8 @@ import { TeamsModule } from './teams/teams.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { UserModule } from './user/user.module';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 
 @Module({
   imports: [
@@ -27,7 +29,9 @@ import { UserModule } from './user/user.module';
     TeamsModule,
     UserModule,
   ],
+  controllers: [AppController],
   providers: [
+    AppService,
     // aplica o throttling globalmente
     { provide: APP_GUARD, useClass: ThrottlerGuard },
   ],

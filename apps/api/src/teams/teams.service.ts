@@ -13,6 +13,13 @@ import { randomBytes } from 'crypto';
 import { getBetterAuthDb } from '../better-auth-db';
 import { SetRoleDto } from './dto/set-role.dto';
 import { addDays } from 'date-fns';
+import { Filter } from 'mongodb';
+
+type UserLite = {
+  id: string;
+  email: string;
+  name?: string | null;
+};
 
 @Injectable()
 export class TeamsService {
@@ -125,6 +132,7 @@ export class TeamsService {
   /**
    * Passo 11 — Lista membros com dados do usuário (email/nome) vindos do BetterAuth.
    */
+
   async listMembers(teamId: string) {
     const members = await this.prisma.membership.findMany({
       where: { teamId },
@@ -135,27 +143,31 @@ export class TeamsService {
     if (members.length === 0) return [];
 
     const db = await getBetterAuthDb();
-    const usersCol = db.collection<{
-      id: string;
-      email: string;
-      name?: string | null;
-    }>('users');
+    const usersCol = db.collection<UserLite>('users');
 
-    const userIds = members.map((m) => m.userId);
-    const users = await usersCol
-      .find({ id: { $in: userIds } })
-      .project({ id: 1, email: 1, name: 1, _id: 0 })
+    const userIds: string[] = members.map((m) => m.userId);
+
+    // Tipagem explícita do filtro e da projeção
+    const filter: Filter<UserLite> = { id: { $in: userIds } };
+    const projection = { id: 1, email: 1, name: 1, _id: 0 } as const;
+
+    const users: UserLite[] = await usersCol
+      .find(filter, { projection })
       .toArray();
 
-    const map = new Map(users.map((u) => [u.id, u]));
-    return members.map((m) => ({
-      userId: m.userId,
-      role: m.role,
-      email: map.get(m.userId)?.email ?? null,
-      name: map.get(m.userId)?.name ?? null,
-      // convenience:
-      isOwner: m.role === Role.OWNER,
-    }));
+    // Map tipado (chave string, valor UserLite)
+    const map = new Map<string, UserLite>(users.map((u) => [u.id, u]));
+
+    return members.map((m) => {
+      const u = map.get(m.userId); // u: UserLite | undefined
+      return {
+        userId: m.userId,
+        role: m.role,
+        email: u?.email ?? null,
+        name: u?.name ?? null,
+        isOwner: m.role === Role.OWNER,
+      };
+    });
   }
 
   /**

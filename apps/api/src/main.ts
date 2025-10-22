@@ -8,7 +8,6 @@ async function bootstrap() {
 
   app.use(helmet());
 
-  // Cookies de sessão do BetterAuth precisam de CORS com credenciais
   app.enableCors({
     origin: process.env.FRONT_ORIGIN?.split(',').map((s) => s.trim()) ?? true,
     credentials: true,
