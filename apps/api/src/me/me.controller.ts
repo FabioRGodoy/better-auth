@@ -16,22 +16,6 @@ export class MeController {
     return session.user;
   }
 
-  @Get('with-teams')
-  async getMeWithTeams(@Session() session: UserSession) {
-    const userId = session.user.id;
-    const { memberships, teams } = await this.meService.getMeWithTeams(userId);
-
-    return {
-      user: session.user,
-      memberships: memberships.map((m) => ({
-        teamId: m.teamId,
-        role: m.role,
-        teamName: teams.find((t) => t.id === m.teamId)?.name ?? null,
-        isOwner: teams.find((t) => t.id === m.teamId)?.ownerId === userId,
-      })),
-    };
-  }
-
   @AllowAnonymous()
   @Get('public')
   publicExample() {

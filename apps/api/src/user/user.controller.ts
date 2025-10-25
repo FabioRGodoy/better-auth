@@ -7,16 +7,13 @@ import { UsersService } from './user.service';
 export class UsersController {
   constructor(private readonly users: UsersService) {}
 
-  /**
-   * Protegido pelo guard global do BetterAuth.
-   * Retorna dados públicos/essenciais de um usuário por id.
-   * Dica: se quiser restringir, compare session.user.id === :id
-   */
+  @Get()
+  async getMany() {
+    return this.users.getMany();
+  }
+
   @Get(':id')
   async getById(@Session() session: UserSession, @Param('id') id: string) {
-    // opcional: restringir para o próprio usuário
-    // if (session.user.id !== id) throw new ForbiddenException()
-
     return this.users.findById(id);
   }
 }

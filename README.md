@@ -34,23 +34,13 @@ src/
 │
 ├── me/
 │   ├── me.module.ts
-│   ├── me.controller.ts         # Rotas /me e /me/with-teams
+│   ├── me.controller.ts         # Rotas /me
 │   └── me.service.ts            # Agregações via Prisma
 │
 ├── users/
 │   ├── users.module.ts
 │   ├── users.controller.ts      # GET /users/:id
 │   └── users.service.ts         # Lê 'users' direto do BetterAuth DB
-│
-├── teams/
-│   ├── teams.module.ts
-│   ├── teams.controller.ts
-│   ├── teams.service.ts
-│   └── dto/
-│       ├── create-team.dto.ts
-│       ├── invite.dto.ts
-│       ├── accept-invite.dto.ts
-│       └── set-role.dto.ts
 │
 └── common/
     └── pipes/
@@ -61,7 +51,7 @@ src/
 
 ## 🧱 Arquitetura Modular
 
-Cada **feature** (ex: `teams`, `users`, `me`) é isolada em seu módulo:
+Cada **feature** (ex: `users`, `me`) é isolada em seu módulo:
 
 - `controller` → entrada HTTP.
 - `service` → regras de negócio.
@@ -80,53 +70,6 @@ para acessar a sessão atual.
 ---
 
 ## 🧰 Banco de Dados (Prisma + Mongo)
-
-```prisma
-generator client {
-  provider = "prisma-client-js"
-}
-
-datasource db {
-  provider = "mongodb"
-  url      = env("DATABASE_URL")
-}
-
-enum Role {
-  OWNER
-  ADMIN
-  MEMBER
-}
-
-model Team {
-  id         String       @id @map("_id") @default(auto()) @db.ObjectId
-  name       String
-  ownerId    String       @db.ObjectId
-  createdAt  DateTime     @default(now())
-  updatedAt  DateTime     @updatedAt
-  memberships Membership[]
-  invitations Invitation[]
-}
-
-model Membership {
-  id      String @id @map("_id") @default(auto()) @db.ObjectId
-  teamId  String @db.ObjectId
-  userId  String @db.ObjectId
-  role    Role
-
-  @@unique([teamId, userId], name: "membership_unique_team_user")
-}
-
-model Invitation {
-  id         String   @id @map("_id") @default(auto()) @db.ObjectId
-  teamId     String   @db.ObjectId
-  email      String
-  token      String   @unique
-  createdAt  DateTime @default(now())
-  @@index([teamId, email], name: "invitation_team_email_idx")
-}
-```
-
----
 
 ## 🔐 Autenticação (BetterAuth)
 
@@ -163,31 +106,17 @@ Essas rotas gerenciam cookies de sessão automaticamente (compatíveis com CORS 
 
 ### `/me`
 
-| Método | Endpoint         | Descrição                            |
-| ------ | ---------------- | ------------------------------------ |
-| `GET`  | `/me`            | Dados do usuário logado (via sessão) |
-| `GET`  | `/me/with-teams` | Usuário + memberships                |
-| `GET`  | `/me/public`     | Endpoint público                     |
-| `GET`  | `/me/optional`   | Sessão opcional                      |
+| Método | Endpoint       | Descrição                            |
+| ------ | -------------- | ------------------------------------ |
+| `GET`  | `/me`          | Dados do usuário logado (via sessão) |
+| `GET`  | `/me/public`   | Endpoint público                     |
+| `GET`  | `/me/optional` | Sessão opcional                      |
 
 ### `/users`
 
 | Método | Endpoint     | Descrição                                  |
 | ------ | ------------ | ------------------------------------------ |
 | `GET`  | `/users/:id` | Consulta usuário (direto do BetterAuth DB) |
-
-### `/teams`
-
-| Método  | Endpoint                 | Descrição                           |
-| ------- | ------------------------ | ----------------------------------- |
-| `POST`  | `/teams`                 | Cria novo time (usuário vira OWNER) |
-| `GET`   | `/teams/mine`            | Lista times do usuário              |
-| `POST`  | `/teams/invite`          | Convida e-mail para o time          |
-| `POST`  | `/teams/accept-invite`   | Aceita convite (com token)          |
-| `GET`   | `/teams/:teamId/members` | Lista membros com nome/email        |
-| `PATCH` | `/teams/:teamId/role`    | Altera role de membro (ADMIN/OWNER) |
-
----
 
 ## 🧠 Policies de segurança
 
@@ -234,11 +163,6 @@ pnpm start:dev
 1. `POST /api/auth/sign-up` → cria usuário
 2. `POST /api/auth/sign-in` → login (gera cookie)
 3. `GET /api/auth/session` → checa sessão
-4. `POST /teams` → cria time
-5. `POST /teams/invite` → cria convite
-6. `POST /teams/accept-invite` → aceita convite
-7. `GET /teams/:teamId/members` → lista membros
-8. `PATCH /teams/:teamId/role` → altera role
 
 O Insomnia mantém automaticamente o cookie de sessão enviado pelo BetterAuth.
 

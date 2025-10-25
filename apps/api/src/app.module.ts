@@ -2,14 +2,11 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule as BetterAuthModule } from '@thallesp/nestjs-better-auth';
-import { auth } from './auth';
 import { MeModule } from './me/me.module';
-import { TeamsModule } from './teams/teams.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { UserModule } from './user/user.module';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { auth } from './auth/auth';
 
 @Module({
   imports: [
@@ -26,12 +23,10 @@ import { AppService } from './app.service';
     ]),
 
     MeModule,
-    TeamsModule,
     UserModule,
   ],
-  controllers: [AppController],
+  controllers: [],
   providers: [
-    AppService,
     // aplica o throttling globalmente
     { provide: APP_GUARD, useClass: ThrottlerGuard },
   ],

@@ -15,6 +15,23 @@ type BetterAuthUser = {
 
 @Injectable()
 export class UsersService {
+  async getMany() {
+    const db = await getBetterAuthDb();
+    const users = db.collection<BetterAuthUser>('users');
+
+    const usersCursor = users.find(
+      {},
+      { projection: { _id: 0, id: 1, email: 1, name: 1, image: 1 } },
+    );
+    const usersList = await usersCursor.toArray();
+
+    return usersList.map((user) => ({
+      id: user.id,
+      email: user.email,
+      name: user.name ?? null,
+      image: user.image ?? null,
+    }));
+  }
   async findById(userId: string) {
     const db = await getBetterAuthDb();
     const users = db.collection<BetterAuthUser>('users');

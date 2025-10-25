@@ -20,51 +20,34 @@ model User {
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  memberships     Membership[]
-  teamsOwned      Team[]       @relation("TeamOwner")
-  invitationsSent Invitation[] @relation("InvitationInviter")
 }
 
-model Team {
-  id      String @id @default(auto()) @map("_id") @db.ObjectId
-  name    String
-  ownerId String @db.ObjectId
+model AuthUser {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  email         String   @unique
+  name          String?
+  emailVerified Boolean?
+  image         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  owner       User         @relation("TeamOwner", fields: [ownerId], references: [id])
-  memberships Membership[]
-  invitations Invitation[]
+  @@map("user") // coleção real usada pelo Better Auth
 }
 
-model Membership {
+model AuthSession {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  teamId    String   @db.ObjectId
   userId    String   @db.ObjectId
-  role      Role     @default(MEMBER)
-  createdAt DateTime @default(now())
+  token     String   @unique
+  expiresAt DateTime
 
-  team Team @relation(fields: [teamId], references: [id])
-  user User @relation(fields: [userId], references: [id])
-
-  @@unique([teamId, userId], map: "membership_unique_team_user")
+  @@map("session")
 }
 
-model Invitation {
-  id         String    @id @default(auto()) @map("_id") @db.ObjectId
-  teamId     String    @db.ObjectId
-  email      String
-  role       Role      @default(MEMBER)
-  token      String    @unique
-  expiresAt  DateTime
-  acceptedAt DateTime?
-  inviterId  String    @db.ObjectId
-  createdAt  DateTime  @default(now())
+model AuthAccount {
+  id         String @id @default(auto()) @map("_id") @db.ObjectId
+  userId     String @db.ObjectId
+  provider   String
+  providerId String
 
-  team    Team @relation(fields: [teamId], references: [id])
-  inviter User @relation("InvitationInviter", fields: [inviterId], references: [id])
-
-  @@index([teamId, email], map: "invitation_team_email_idx")
+  @@map("account")
 }
