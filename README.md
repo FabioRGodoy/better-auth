@@ -198,8 +198,3 @@ O Insomnia mantém automaticamente o cookie de sessão enviado pelo BetterAuth.
 - [ ] Deploy containerizado (Docker + Traefik / Fly.io)
 
 ---
-
-## 🧾 Licença
-
-Projeto interno (temporário).  
-Feito com ❤️ e NestJS.

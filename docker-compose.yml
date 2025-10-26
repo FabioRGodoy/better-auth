@@ -1,15 +1,42 @@
 version: "3.9"
+
 services:
-  better_auth:
+  mongo:
     image: mongo:7
-    container_name: better_auth
+    container_name: better_auth_mongo
+    command: ["--replSet", "rs0", "--bind_ip_all"]
     restart: unless-stopped
-    environment:
-      MONGO_INITDB_DATABASE: betterauth
     ports:
       - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: betterauth
     volumes:
       - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD-SHELL", "mongosh --quiet --eval 'db.adminCommand({ ping: 1 })' || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+
+  mongo-init-replica:
+    image: mongo:7
+    container_name: better_auth_mongo_init
+    depends_on:
+      mongo:
+        condition: service_healthy
+    restart: "no"
+    entrypoint: >
+      bash -lc '
+      echo "=> Initiating replica set rs0...";
+      mongosh --host mongo:27017 --quiet --eval "
+        try {
+          rs.initiate({_id: \"rs0\", members: [{ _id: 0, host: \"mongo:27017\" }]});
+        } catch(e) {
+          print(\"rs.initiate() may already be done:\", e);
+        }
+        printjson(rs.status());
+      ";
+      '
 
 volumes:
   mongo_data:

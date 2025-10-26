@@ -15,7 +15,7 @@ export const member = ac.newRole({
   project: ['create'],
 });
 
-export const admin = ac.newRole({
+export const adminPermissions = ac.newRole({
   ...adminAc.statements,
   project: ['create', 'update'],
 });

@@ -1,27 +1,28 @@
 import { betterAuth } from 'better-auth';
-import { organization } from 'better-auth/plugins';
-import { MongoClient } from 'mongodb';
-import { mongodbAdapter } from 'better-auth/adapters/mongodb';
-import { admin, member, owner, ac } from './permissions';
+import { organization, admin } from 'better-auth/plugins';
+import { adminPermissions, member, owner, ac } from './permissions';
+import { PrismaClient } from '@prisma/client';
+import { prismaAdapter } from 'better-auth/adapters/prisma';
 
-const client = new MongoClient(process.env.DATABASE_URL!);
-const db = client.db();
+const prisma = new PrismaClient();
 
-export const auth: ReturnType<typeof betterAuth> = betterAuth({
+const authInternal = betterAuth({
   secret: process.env.BETTER_AUTH_SECRET!,
   baseURL: process.env.BETTER_AUTH_URL!,
   basePath: '/auth',
-  database: mongodbAdapter(db),
+  database: prismaAdapter(prisma, { provider: 'mongodb' }),
   emailAndPassword: { enabled: true, requireEmailVerification: false },
   plugins: [
+    admin(),
     organization({
       teams: { enabled: true },
+      invitations: { enabled: true },
       ac,
-      roles: {
-        owner,
-        admin,
-        member,
-      },
+      roles: { owner, admin: adminPermissions, member },
     }),
   ],
 });
+
+export const auth = authInternal;
+
+export type AuthInstance = typeof auth;
