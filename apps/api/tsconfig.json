@@ -3,6 +3,7 @@
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "resolvePackageJsonExports": true,
+    "strict": true,
     "declaration": false,
     "skipLibCheck": true,
     "esModuleInterop": true,

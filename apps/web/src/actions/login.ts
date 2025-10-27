@@ -3,7 +3,6 @@
 import "server-only";
 import { z } from "zod";
 import { redirect } from "next/navigation";
-import { signInEmail } from "@/lib/auth-server";
 
 const loginSchema = z.object({
   email: z.email(),
@@ -14,7 +13,7 @@ export type SignInSchema = z.infer<typeof loginSchema>;
 
 export const login = async (
   _prevState: { error?: string },
-  formData: FormData,
+  formData: FormData
 ): Promise<never | { error?: string }> => {
   console.debug("Calling login server action!");
 
@@ -30,13 +29,13 @@ export const login = async (
   }
 
   try {
-    await signInEmail({
-      body: {
-        email: data.email,
-        password: data.password,
-      },
-      asResponse: false,
-    });
+    // await signInEmail({
+    //   body: {
+    //     email: data.email,
+    //     password: data.password,
+    //   },
+    //   asResponse: false,
+    // });
   } catch (err) {
     console.error(err);
     return {

@@ -36,4 +36,22 @@ export class UsersService {
       updatedAt: user.updatedAt,
     };
   }
+
+  async findMany() {
+    const db = await getBetterAuthDb();
+    const users = db.collection<BetterAuthUser>('users');
+
+    const cursor = users.find({});
+    const all = await cursor.toArray();
+
+    return all.map((user) => ({
+      id: user.id,
+      email: user.email,
+      emailVerified: user.emailVerified,
+      name: user.name ?? null,
+      image: user.image ?? null,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    }));
+  }
 }

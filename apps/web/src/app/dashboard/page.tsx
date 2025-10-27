@@ -1,19 +1,14 @@
 import { AppSidebar } from "@/components/app-sidebar";
 import { ChartAreaInteractive } from "@/components/chart-area-interactive";
-import { DataTable } from "./_components/data-table";
 import { SectionCards } from "@/components/section-cards";
 import { SiteHeader } from "@/components/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { Suspense } from "react";
 
-import { db } from "@/db";
-import { demoData } from "@/db/schema";
-
 export default function Page() {
   // We can do this here because this is a server component!
   // Notice that we don't await this, we simply pass the promise into a suspended component!
   // Pitfall: If the fetch fails, the whole page component will fail.
-  const dataPromise = db.select().from(demoData);
 
   return (
     <SidebarProvider
@@ -35,7 +30,7 @@ export default function Page() {
                 <ChartAreaInteractive />
               </div>
               <Suspense fallback={<div>Loading...</div>}>
-                <DataTable dataPromise={dataPromise} />
+                {/* <DataTable dataPromise={dataPromise} /> */}
               </Suspense>
             </div>
           </div>

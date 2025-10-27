@@ -1,17 +1,17 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule as BetterAuthModule } from '@thallesp/nestjs-better-auth';
 import { MeModule } from './me/me.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { UserModule } from './user/user.module';
 import { auth } from './auth/auth';
+import { DatabaseModule } from './database/database.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    PrismaModule,
+    DatabaseModule,
     BetterAuthModule.forRoot({ auth }),
 
     // Rate limiting (ex.: 60 req/min por IP)

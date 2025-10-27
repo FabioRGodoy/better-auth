@@ -1,10 +1,8 @@
 import { betterAuth } from 'better-auth';
 import { organization, admin } from 'better-auth/plugins';
 import { adminPermissions, member, owner, ac } from './permissions';
-import { PrismaClient } from '@prisma/client';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
-
-const prisma = new PrismaClient();
+import { prisma } from '@repo/database';
 
 const authInternal = betterAuth({
   secret: process.env.BETTER_AUTH_SECRET!,
@@ -12,6 +10,8 @@ const authInternal = betterAuth({
   basePath: '/auth',
   database: prismaAdapter(prisma, { provider: 'mongodb' }),
   emailAndPassword: { enabled: true, requireEmailVerification: false },
+  trustedOrigins: ['http://localhost:30001'],
+  redirects: { enabled: false },
   plugins: [
     admin(),
     organization({
