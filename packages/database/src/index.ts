@@ -1,16 +1,5 @@
-import { PrismaClient } from "@prisma/client";
+export { prisma } from './client.js';
+export type { PrismaClient } from './client.js';
+export * as Prisma from './client.js';
 
-export const prisma: PrismaClient =
-  globalThis.__prisma ??
-  new PrismaClient({
-    log:
-      process.env.NODE_ENV === "production"
-        ? ["error"]
-        : ["query", "warn", "error"],
-  });
-
-if (process.env.NODE_ENV !== "production") {
-  globalThis.__prisma = prisma;
-}
-
-export type { PrismaClient };
+export { PrismaService } from './nest/prisma.service.js';

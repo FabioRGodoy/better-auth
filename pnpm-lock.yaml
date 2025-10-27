@@ -277,31 +277,22 @@ importers:
 
   packages/database:
     dependencies:
+      '@nestjs/common':
+        specifier: ^11.0.0
+        version: 11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       '@prisma/client':
-        specifier: 6.18.0
-        version: 6.18.0(prisma@6.18.0)(typescript@5.5.4)
+        specifier: ^6.18.0
+        version: 6.18.0(prisma@6.18.0)(typescript@5.9.2)
     devDependencies:
-      '@repo/eslint-config':
-        specifier: '*'
-        version: link:../eslint-config
-      '@repo/typescript-config':
-        specifier: '*'
-        version: link:../typescript-config
       '@types/node':
         specifier: ^24.9.1
         version: 24.9.1
-      add:
-        specifier: ^2.0.6
-        version: 2.0.6
-      pnpm:
-        specifier: ^10.19.0
-        version: 10.19.0
       prisma:
-        specifier: 6.18.0
-        version: 6.18.0(typescript@5.5.4)
+        specifier: ^6.18.0
+        version: 6.18.0(typescript@5.9.2)
       typescript:
-        specifier: 5.5.4
-        version: 5.5.4
+        specifier: ^5.6.3
+        version: 5.9.2
 
   packages/eslint-config:
     devDependencies:
@@ -2598,7 +2589,7 @@ packages:
     engines: {node: ^12.20.0 || ^14.18.0 || >=16.0.0}
     dev: true
 
-  /@prisma/client@6.18.0(prisma@6.18.0)(typescript@5.5.4):
+  /@prisma/client@6.18.0(prisma@6.18.0)(typescript@5.9.2):
     resolution: {integrity: sha512-jnL2I9gDnPnw4A+4h5SuNn8Gc+1mL1Z79U/3I9eE2gbxJG1oSA+62ByPW4xkeDgwE0fqMzzpAZ7IHxYnLZ4iQA==}
     engines: {node: '>=18.18'}
     requiresBuild: true
@@ -2611,8 +2602,8 @@ packages:
       typescript:
         optional: true
     dependencies:
-      prisma: 6.18.0(typescript@5.5.4)
-      typescript: 5.5.4
+      prisma: 6.18.0(typescript@5.9.2)
+      typescript: 5.9.2
     dev: false
 
   /@prisma/config@6.17.1:
@@ -4620,10 +4611,6 @@ packages:
     resolution: {integrity: sha512-NZyJarBfL7nWwIq+FDL6Zp/yHEhePMNnnJ0y3qfieCrmNvYct8uvtiV41UvlSe6apAfk0fY1FbWx+NwfmpvtTg==}
     engines: {node: '>=0.4.0'}
     hasBin: true
-    dev: true
-
-  /add@2.0.6:
-    resolution: {integrity: sha512-j5QzrmsokwWWp6kUcJQySpbG+xfOBqqKnup3OIk1pz+kB/80SLorZ9V8zHFLO92Lcd+hbvq8bT+zOGoPkmBV0Q==}
     dev: true
 
   /ajv-formats@2.1.1(ajv@8.17.1):
@@ -8518,12 +8505,6 @@ packages:
     engines: {node: '>=4'}
     dev: true
 
-  /pnpm@10.19.0:
-    resolution: {integrity: sha512-yfxyNukq31yK9C/VvxYS35nCzrYvJwRwMvRyCzP46s3eMRhl6RxBHyd09hjYLzIICOy1Fxi/qCwGDEunx2oyuA==}
-    engines: {node: '>=18.12'}
-    hasBin: true
-    dev: true
-
   /possible-typed-array-names@1.1.0:
     resolution: {integrity: sha512-/+5VFTchJDoVj3bhoqi6UeymcD00DAwb1nJwamzPvHEszJ4FpF6SNNbUbOS8yI56qHzdV8eK0qEfOSiodkTdxg==}
     engines: {node: '>= 0.4'}
@@ -8667,7 +8648,7 @@ packages:
       - magicast
     dev: true
 
-  /prisma@6.18.0(typescript@5.5.4):
+  /prisma@6.18.0(typescript@5.9.2):
     resolution: {integrity: sha512-bXWy3vTk8mnRmT+SLyZBQoC2vtV9Z8u7OHvEu+aULYxwiop/CPiFZ+F56KsNRNf35jw+8wcu8pmLsjxpBxAO9g==}
     engines: {node: '>=18.18'}
     hasBin: true
@@ -8680,7 +8661,7 @@ packages:
     dependencies:
       '@prisma/config': 6.18.0
       '@prisma/engines': 6.18.0
-      typescript: 5.5.4
+      typescript: 5.9.2
     transitivePeerDependencies:
       - magicast
 
@@ -10033,11 +10014,6 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: true
-
-  /typescript@5.5.4:
-    resolution: {integrity: sha512-Mtq29sKDAEYP7aljRgtPOpTvOfbwRWlS6dPRzwjdE+C0R4brX/GUyhHSecbHMFLNBLcJIPt9nl9yG5TZ1weH+Q==}
-    engines: {node: '>=14.17'}
-    hasBin: true
 
   /typescript@5.8.3:
     resolution: {integrity: sha512-p1diW6TqL9L07nNxvRMM7hMMw4c5XOo/1ibL4aAIGmSAt9slTE1Xgw5KWuof2uTOvCg9BY7ZRi+GaF+7sfgPeQ==}

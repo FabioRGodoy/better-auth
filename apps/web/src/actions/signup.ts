@@ -1,7 +1,7 @@
 "use server";
 
 import "server-only";
-import { signUpEmail } from "@/lib/auth-server";
+// import { signUpEmail } from "@/lib/auth-server";
 import { z } from "zod";
 import { redirect } from "next/navigation";
 
@@ -15,7 +15,7 @@ export type SignupSchema = z.infer<typeof signupSchema>;
 
 export const signUp = async (
   _prevState: { error?: string },
-  formData: FormData,
+  formData: FormData
 ): Promise<never | { error?: string }> => {
   console.debug("Calling signup server action!");
 
@@ -33,14 +33,14 @@ export const signUp = async (
   }
 
   try {
-    await signUpEmail({
-      body: {
-        email: data.email,
-        password: data.password,
-        name: data.name,
-      },
-      asResponse: false,
-    });
+    // await signUpEmail({
+    //   body: {
+    //     email: data.email,
+    //     password: data.password,
+    //     name: data.name,
+    //   },
+    //   asResponse: false,
+    // });
   } catch (err) {
     console.error(err);
     return {

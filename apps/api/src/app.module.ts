@@ -6,12 +6,13 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { UserModule } from './user/user.module';
 import { auth } from './auth/auth';
-import { DatabaseModule } from './database/database.module';
+import { PrismaService } from '@repo/database';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    DatabaseModule,
     BetterAuthModule.forRoot({ auth }),
 
     // Rate limiting (ex.: 60 req/min por IP)
@@ -25,8 +26,10 @@ import { DatabaseModule } from './database/database.module';
     MeModule,
     UserModule,
   ],
-  controllers: [],
+  controllers: [AppController],
   providers: [
+    PrismaService,
+    AppService,
     // aplica o throttling globalmente
     { provide: APP_GUARD, useClass: ThrottlerGuard },
   ],
