@@ -5,10 +5,10 @@ import { MeModule } from './me/me.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { UserModule } from './user/user.module';
-import { auth } from './auth/auth';
 import { PrismaService } from '@repo/database';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { auth } from '@repo/auth/server';
 
 @Module({
   imports: [

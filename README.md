@@ -1,3 +1,5 @@
+# PS: Sempre rode o build dos packages database e auth.
+
 # 🚀 API - NestJS + BetterAuth + Prisma (MongoDB)
 
 Este projeto implementa uma **arquitetura modular (feature-based)** para uma API NestJS com autenticação **BetterAuth**, banco **MongoDB (via Prisma)** e controle de times, membros e convites.  
