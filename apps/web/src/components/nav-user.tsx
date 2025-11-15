@@ -24,10 +24,10 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { logout } from "@/actions/logout";
-import { useActionState } from "react";
 import { Loader2Icon } from "lucide-react";
-import { useSession } from "@/lib/auth-client";
+import { authClient, useSession } from "@/lib/auth-client";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export function NavUser({
   user,
@@ -39,11 +39,22 @@ export function NavUser({
   };
 }) {
   const { isMobile } = useSidebar();
+  const router = useRouter();
+  const [pending, setPending] = useState(false);
 
-  const [state, logoutAction, pending] = useActionState(logout, {});
-
-  // Example of how to use the useSession hook in client-side components
   const session = useSession();
+
+  const handleLogout = async () => {
+    setPending(true);
+    try {
+      await authClient.signOut();
+      router.push("/login");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    } finally {
+      setPending(false);
+    }
+  };
 
   return (
     <SidebarMenu>
@@ -117,18 +128,14 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <form action={logoutAction}>
-              <button type="submit" disabled={pending} className="w-full">
-                <DropdownMenuItem disabled={pending}>
-                  {pending ? (
-                    <Loader2Icon className="size-4 animate-spin" />
-                  ) : (
-                    <IconLogout />
-                  )}
-                  Log out
-                </DropdownMenuItem>
-              </button>
-            </form>
+            <DropdownMenuItem onClick={handleLogout} disabled={pending}>
+              {pending ? (
+                <Loader2Icon className="size-4 animate-spin" />
+              ) : (
+                <IconLogout />
+              )}
+              Log out
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>

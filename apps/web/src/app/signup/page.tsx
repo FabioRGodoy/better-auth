@@ -13,19 +13,21 @@ import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import Link from "next/link";
 import DecorationPic from "./decoration.png";
-
-// We can also use server actions in client components.
-import { signUp } from "@/actions/signup";
 import {
   type FormEventHandler,
-  useActionState,
+  FormEvent,
   useCallback,
   useRef,
+  useState,
 } from "react";
 import { Loader2Icon } from "lucide-react";
+import { authClient } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
 
 export default function SignupPage() {
-  const [state, formAction, pending] = useActionState(signUp, {});
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const passwordInputRef = useRef<HTMLInputElement>(null);
   const confirmPasswordInputRef = useRef<HTMLInputElement>(null);
@@ -35,10 +37,34 @@ export default function SignupPage() {
     confirmPasswordInputRef.current?.setCustomValidity("");
     if (passwordInputRef.current?.value !== ev.currentTarget.value) {
       confirmPasswordInputRef.current?.setCustomValidity(
-        "Passwords do not match",
+        "Passwords do not match"
       );
     }
   }, []);
+
+  async function onSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    const formData = new FormData(e.currentTarget);
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+    const name = formData.get("name") as string;
+
+    try {
+      const res = await authClient.signUp.email({ email, password, name });
+      if (res.error) {
+        setError(res.error.message ?? "Failed to create account");
+        return;
+      }
+      router.push("/login");
+    } catch (err) {
+      setError("Unexpected error during signup");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <div className="bg-muted flex min-h-svh flex-col items-center justify-center p-6 md:p-10">
@@ -46,7 +72,7 @@ export default function SignupPage() {
         <div className="flex flex-col gap-6">
           <Card className="overflow-hidden p-0">
             <CardContent className="grid p-0 md:grid-cols-2">
-              <form action={formAction} className="p-6 md:p-8">
+              <form onSubmit={onSubmit} className="p-6 md:p-8">
                 <FieldGroup>
                   <div className="flex flex-col items-center gap-2 text-center">
                     <h1 className="text-2xl font-bold">Create your account</h1>
@@ -108,17 +134,15 @@ export default function SignupPage() {
                       Must be at least 8 characters long.
                     </FieldDescription>
                   </Field>
-                  {state?.error && (
+                  {error && (
                     <FieldError
                       className="text-center"
-                      errors={state.error.split("\n").map((err) => ({
-                        message: err,
-                      }))}
+                      errors={[{ message: error }]}
                     />
                   )}
                   <Field>
-                    <Button type="submit" disabled={pending}>
-                      {pending && (
+                    <Button type="submit" disabled={loading}>
+                      {loading && (
                         <Loader2Icon className="size-4 animate-spin" />
                       )}
                       Create Account

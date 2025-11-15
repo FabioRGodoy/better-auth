@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import {
   Field,
   FieldDescription,
+  FieldError,
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
@@ -19,7 +20,6 @@ import { authClient } from "@/lib/auth-client";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -33,12 +33,12 @@ export default function LoginPage() {
     try {
       const res = await authClient.signIn.email({ email, password });
       if (res.error) {
-        setError(res.error.message ?? "Falha ao fazer login");
+        setError(res.error.message ?? "Failed to login");
         return;
       }
-      router.replace("/");
+      router.push("/dashboard");
     } catch (err) {
-      setError("Erro inesperado ao fazer login");
+      setError("Unexpected error during login");
     } finally {
       setLoading(false);
     }
@@ -87,14 +87,12 @@ export default function LoginPage() {
                     />
                   </Field>
 
-                  {/* {state?.error && (
+                  {error && (
                     <FieldError
                       className="text-center"
-                      errors={state.error.split("\n").map((err) => ({
-                        message: err,
-                      }))}
+                      errors={[{ message: error }]}
                     />
-                  )} */}
+                  )}
 
                   <Field>
                     <Button type="submit" disabled={loading}>

@@ -10,7 +10,7 @@ const authInternal = betterAuth({
   basePath: "/auth",
   database: prismaAdapter(prisma, { provider: "mongodb" }),
   emailAndPassword: { enabled: true, requireEmailVerification: false },
-  trustedOrigins: ["http://localhost:30001"],
+  trustedOrigins: ["http://localhost:3001"],
   redirects: { enabled: false },
   plugins: [
     admin(),
