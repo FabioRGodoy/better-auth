@@ -8,7 +8,7 @@ import { UserModule } from './user/user.module';
 import { PrismaService } from '@repo/database';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { auth } from '@repo/auth/server';
+import { auth } from './auth/index.js';
 
 @Module({
   imports: [

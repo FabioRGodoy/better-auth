@@ -1,9 +1,5 @@
 {
   "compilerOptions": {
-    "paths": {
-      "@repo/auth": ["../../packages/auth/dist/index.d.ts"],
-      "@repo/auth/*": ["../../packages/auth/dist/*"]
-    },
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "resolvePackageJsonExports": true,
