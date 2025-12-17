@@ -1,29 +1,42 @@
 "use client";
 
-import { login } from "@/app/actions/auth";
+import { signup } from "@/app/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useActionState } from "react";
 import Link from "next/link";
 
-export default function LoginPage() {
-  const [state, action, pending] = useActionState(login, undefined);
+export default function SignupPage() {
+  const [state, action, pending] = useActionState(signup, undefined);
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
+    <main className="min-h-screen flex items-center justify-center">
       <div className="w-full max-w-md flex flex-col gap-8">
         <div className="text-center mb-2">
           <h1 className="text-3xl font-bold tracking-tight mb-2">
-            Bem-vindo de volta
+            Criar uma conta
           </h1>
           <p className="text-muted-foreground">
-            Entre com sua conta para continuar
+            Preencha os dados abaixo para começar
           </p>
         </div>
 
         <div className="border bg-card p-8 rounded-lg shadow-xl">
           <form action={action} className="flex flex-col space-y-5">
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="name">Nome completo</Label>
+              <Input
+                id="name"
+                name="name"
+                placeholder="João Silva"
+                className="h-11"
+              />
+              {state?.errors?.name && (
+                <p className="text-sm text-destructive">{state.errors.name}</p>
+              )}
+            </div>
+
             <div className="flex flex-col gap-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -64,23 +77,23 @@ export default function LoginPage() {
             </div>
 
             <Button type="submit" disabled={pending} className="h-11 mt-2">
-              {pending ? "Entrando..." : "Entrar"}
+              {pending ? "Criando conta..." : "Criar conta"}
             </Button>
           </form>
 
           <div className="mt-6 text-center">
             <p className="text-sm text-muted-foreground">
-              Não tem uma conta?{" "}
+              Já tem uma conta?{" "}
               <Link
-                href="/signup"
+                href="/login"
                 className="font-medium text-primary hover:underline underline-offset-4"
               >
-                Criar conta
+                Fazer login
               </Link>
             </p>
           </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 }
