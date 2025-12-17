@@ -1,9 +1,13 @@
 "use server";
 
-import { FormState, SignupFormSchema } from "@/lib/definitions";
+import { SignupFormSchema, SignupState } from "@/lib/definitions";
+import axios from "axios";
 import "server-only";
 
-export async function signup(state: FormState, formData: FormData) {
+export async function signup(
+  _state: SignupState,
+  formData: FormData
+): Promise<SignupState> {
   const validatedFields = SignupFormSchema.safeParse({
     name: formData.get("name"),
     email: formData.get("email"),
@@ -15,9 +19,18 @@ export async function signup(state: FormState, formData: FormData) {
       errors: validatedFields.error.flatten().fieldErrors,
     };
   }
-}
 
-export async function login(state: FormState, formData: FormData) {
+  await axios.post(
+    "http://localhost:3000/auth/sign-up/email",
+    validatedFields.data
+  );
+
+  return { message: "Usuário criado com sucesso" };
+}
+export async function login(
+  _state: SignupState,
+  formData: FormData
+): Promise<SignupState> {
   const validatedFields = SignupFormSchema.pick({
     email: true,
     password: true,
@@ -31,4 +44,11 @@ export async function login(state: FormState, formData: FormData) {
       errors: validatedFields.error.flatten().fieldErrors,
     };
   }
+
+  await axios.post(
+    "http://localhost:3000/auth/sign-in/email",
+    validatedFields.data
+  );
+
+  return { message: "Login realizado com sucesso" };
 }

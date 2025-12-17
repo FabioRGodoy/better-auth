@@ -6,9 +6,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useActionState } from "react";
 import Link from "next/link";
+import { SignupState } from "@/lib/definitions";
 
 export default function SignupPage() {
-  const [state, action, pending] = useActionState(signup, undefined);
+  const [state, action, pending] = useActionState<SignupState, FormData>(
+    signup,
+    {}
+  );
 
   return (
     <main className="min-h-screen flex items-center justify-center">
